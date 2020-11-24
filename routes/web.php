@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PagesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,14 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('test');
-});
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [PagesController::class, 'dashboard'])->name('dashboard');
 
-Route::get('/dd', function () {
-    return view('dashboard');
-});
+Route::get('/about', [PagesController::class, 'about'])->name('about');
+Route::get('/', [PagesController::class, 'index'])->name('index');

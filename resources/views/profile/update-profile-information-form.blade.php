@@ -65,6 +65,13 @@
             <x-jet-input id="email" type="email" class="mt-1 block w-full" wire:model.defer="state.email" />
             <x-jet-input-error for="email" class="mt-2" />
         </div>
+
+        <!-- Mobile Phone -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="mobile_phone" value="{{ __('Mobile Phone') }}" />
+            <x-jet-input id="mobile_phone" type="text" class="mt-1 block w-full" wire:model.defer="state.mobile_phone" />
+            <x-jet-input-error for="mobile_phone" class="mt-2" />
+        </div>
     </x-slot>
 
     <x-slot name="actions">
