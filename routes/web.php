@@ -16,6 +16,7 @@ use App\Http\Controllers\PagesController;
 
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [PagesController::class, 'dashboard'])->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/payroll', [PagesController::class, 'payroll'])->name('payroll');
 
 Route::get('/about', [PagesController::class, 'about'])->name('about');
 Route::get('/', [PagesController::class, 'index'])->name('index');

@@ -18,6 +18,10 @@ class PagesController extends Controller
     }
 
     public function dashboard(){
-      return view('pages.dashboard')->with('business',Business::where('id',1)->first());
+      return view('pages.dashboard', ['business' => Business::where('id',1)->first()]);
+    }
+
+    public function payroll(){
+      return view('pages.payroll', ['business' => Business::where('id',1)->first()]);
     }
 }
