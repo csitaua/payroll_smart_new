@@ -13,4 +13,8 @@ class Business extends Model
         'business_name', 'registration_number', 'address', 'city', 'country', 'phone_1', 'phone_2',
     ];
 
+    public function employees(){
+      return $this->hasMany('App\Models\Employee');
+    }
+
 }

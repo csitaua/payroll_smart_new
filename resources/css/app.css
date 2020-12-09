@@ -1,3 +1,48 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import 'pikaday/css/pikaday.css';
+@import 'font-awesome/css/font-awesome.css';
+
+@layer components{
+  .input-box-1 {
+    @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight;
+  }
+  .input-box-1:focus{
+    @apply outline-none shadow-outline;
+  }
+
+  .label-input-box-1{
+    @apply block text-gray-700 text-sm font-bold mb-2;
+  }
+
+  .label-input-box-2{
+    @apply block text-gray-700 text-sm font-bold mb-2;
+  }
+
+  .btn-add-edit {
+    @apply bg-blue-400 text-white font-bold py-2 px-4 rounded my-3;
+  }
+  .btn-add-edit:hover {
+    @apply bg-blue-600;
+  }
+
+  .btn-delete {
+    @apply bg-red-500 text-white font-bold py-2 px-4 rounded my-3;
+  }
+  .btn-delete:hover {
+    @apply bg-red-700
+  }
+
+  .btn-cancel {
+    @apply bg-gray-300 text-white font-bold py-2 px-4 rounded my-3;
+  }
+  .btn-cancel:hover {
+    @apply bg-gray-500
+  }
+
+  .drop-down-select{
+    @apply inline text-gray-700 text-sm font-bold mb-2;
+  }
+
+}

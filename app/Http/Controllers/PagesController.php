@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Business;
+use App\Models\Employee;
 
 
 class PagesController extends Controller
@@ -22,6 +23,15 @@ class PagesController extends Controller
     }
 
     public function payroll(){
-      return view('pages.payroll', ['business' => Business::where('id',1)->first()]);
+      $business = Business::where('id',auth()->user()->business_user->business_id)->first();
+      $employees = Employee::where('business_id',$business->id);
+      return view('pages.payroll', ['user' => auth()->user(), 'business' => $business, 'employees' => $employees]);
+    }
+
+    public function employeePartial(){
+      $search = request('search');
+      $business = Business::where('id',auth()->user()->business_user->business_id)->first();
+      $employees = Employee::search($search);
+      return view('sections.payroll.employee-partial', ['user' => auth()->user(), 'business' => $business, 'employees' => $employees]);
     }
 }

@@ -8,9 +8,16 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                Dashboard </br>
-                {{ Auth::id()}}
-                {{ $business->business_name }}
+                Payroll Dashboard </br>
+                {{ $user->name }} </br>
+                {{ $user->business_user->role }} </br>
+                {{ $business->registration_number }} </br>
+                @foreach ($business->employees as $employee)
+                  {{ $employee->first_name }}
+                  @foreach ($employee->addresses as $address)
+                    {{ $address->address_1 }}
+                  @endforeach
+                @endforeach
             </div>
         </div>
     </div>

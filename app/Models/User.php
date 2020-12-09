@@ -57,4 +57,8 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function business_user(){
+      return $this->hasOne('App\Models\Business_user');
+    }
 }
