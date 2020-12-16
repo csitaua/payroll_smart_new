@@ -37,6 +37,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'mobile_phone' => $input['mobile_phone'],
+                'locale' => $input['locale'],
             ])->save();
         }
     }

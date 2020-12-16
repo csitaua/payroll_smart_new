@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'mobile_phone',
+        'name', 'email', 'password', 'mobile_phone', 'locale','current_business_id',
     ];
 
     /**
@@ -61,4 +61,5 @@ class User extends Authenticatable
     public function business_user(){
       return $this->hasOne('App\Models\Business_user');
     }
+
 }

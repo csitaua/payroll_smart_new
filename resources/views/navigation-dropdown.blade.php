@@ -70,22 +70,21 @@
 
                         <div class="border-t border-gray-100"></div>
 
-                        <!-- Team Management -->
+                        <!-- Business Management -->
                         @auth
-                        @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                             <div class="block px-4 py-2 text-xs text-gray-400">
-                                {{ __('Manage Team') }}
+                                {{ __('Manage Business') }}
                             </div>
 
                             <!-- Team Settings -->
-                            <x-jet-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
-                                {{ __('Team Settings') }}
+                            <x-jet-dropdown-link href="{{ route('business.show', Auth::user()->current_business_id) }}">
+                                {{ __('Business Settings') }}
                             </x-jet-dropdown-link>
 
 
                             @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                                 <x-jet-dropdown-link href="{{ route('teams.create') }}">
-                                    {{ __('Create New Team') }}
+                                    {{ __('Create New Business') }}
                                 </x-jet-dropdown-link>
                             @endcan
 
@@ -93,15 +92,19 @@
 
                             <!-- Team Switcher -->
                             <div class="block px-4 py-2 text-xs text-gray-400">
-                                {{ __('Switch Teams') }}
+                                {{ __('Switch Business') }}
                             </div>
 
-                            @foreach (Auth::user()->allTeams() as $team)
-                                <x-jet-switchable-team :team="$team" />
+                            @foreach (App\Models\Business::whereExists(function ($query) {
+                              $query->select(DB::raw(1))
+                                   ->from('business_users')
+                                   ->whereColumn('business_users.business_id', 'businesses.id')
+                                   ->where('business_users.user_id',Auth::user()->id);
+                              })->get() as $business)
+                                <x-switchable-company :business="$business" />
                             @endforeach
 
                             <div class="border-t border-gray-100"></div>
-                        @endif
                         @endauth
 
                         <!-- Authentication -->
@@ -178,36 +181,38 @@
                     </x-jet-responsive-nav-link>
                 </form>
 
-                <!-- Team Management -->
+                <!-- Business Management -->
                 @auth
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="border-t border-gray-200"></div>
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
-                        {{ __('Manage Team') }}
+                        {{ __('Manage Business') }}
                     </div>
 
-                    <!-- Team Settings -->
+                    <!-- Business Settings -->
 
-                    <x-jet-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
-                        {{ __('Team Settings') }}
+                    <x-jet-responsive-nav-link href="{{ route('business.show', Auth::user()->current_business_id) }}" :active="request()->routeIs('business.show')">
+                        {{ __('Business Settings') }}
                     </x-jet-responsive-nav-link>
 
                     <x-jet-responsive-nav-link href="{{ route('teams.create') }}" :active="request()->routeIs('teams.create')">
-                        {{ __('Create New Team') }}
+                        {{ __('Create New Business') }}
                     </x-jet-responsive-nav-link>
 
                     <div class="border-t border-gray-200"></div>
 
-                    <!-- Team Switcher -->
+                    <!-- Business Switcher -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
-                        {{ __('Switch Teams') }}
+                        {{ __('Switch Business') }}
                     </div>
-
-                    @foreach (Auth::user()->allTeams() as $team)
-                        <x-jet-switchable-team :team="$team" component="jet-responsive-nav-link" />
+                    @foreach (App\Models\Business::whereExists(function ($query) {
+                      $query->select(DB::raw(1))
+                           ->from('business_users')
+                           ->whereColumn('business_users.business_id', 'businesses.id')
+                           ->where('business_users.user_id',Auth::user()->id);
+                      })->get() as $business)
+                        <x-switchable-company :business="$business" component="jet-responsive-nav-link" />
                     @endforeach
-                @endif
                 @endauth
             </div>
         </div>

@@ -32,6 +32,18 @@ return [
     | mechanisms used by this application to persist your user's data.
     |
     | Supported: "session", "token"
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+    ],
     |
     */
 

@@ -1,23 +1,38 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-@import 'pikaday/css/pikaday.css';
 @import 'font-awesome/css/font-awesome.css';
 
 @layer components{
+
+  .employee-new-edit-grid{
+    @apply grid grid-flow-col grid-rows-1 grid-cols-8 gap-1 py-2.5;
+  }
+
   .input-box-1 {
-    @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight;
+    @apply shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight mr-2;
   }
   .input-box-1:focus{
     @apply outline-none shadow-outline;
   }
 
+  .input-box-grid-1 {
+    @apply shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-3/4;
+  }
+  .input-box-grid-1:focus{
+    @apply outline-none shadow-outline;
+  }
+
   .label-input-box-1{
-    @apply block text-gray-700 text-sm font-bold mb-2;
+    @apply inline text-gray-700 text-sm font-bold;
+  }
+
+  .label-input-box-grid-1{
+    @apply inline text-gray-700 text-sm font-bold mb-2 mr-2 w-1/4;
   }
 
   .label-input-box-2{
-    @apply block text-gray-700 text-sm font-bold mb-2;
+    @apply inline text-gray-700 text-sm font-bold mb-2 w-1/4;
   }
 
   .btn-add-edit {
@@ -35,10 +50,10 @@
   }
 
   .btn-cancel {
-    @apply bg-gray-300 text-white font-bold py-2 px-4 rounded my-3;
+    @apply bg-gray-400 text-white font-bold py-2 px-4 rounded my-3;
   }
   .btn-cancel:hover {
-    @apply bg-gray-500
+    @apply bg-gray-600
   }
 
   .drop-down-select{

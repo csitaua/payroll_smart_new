@@ -3,20 +3,27 @@
 namespace App\Http\Livewire;
 use App\Models\Business;
 use App\Models\Employee;
+use App\Models\Country;
 use Livewire\WithPagination;
 use Livewire\Component;
 
 class EmployeesTable extends Component
 {
   use WithPagination;
-  public $employee_id, $first_name, $last_name, $date_of_birth, $id_number, $tax_id_number, $married, $tax_group, $payment_period, $number_of_childrens,
-  $work_type,$number_of_work_days, $email, $hire_date, $termination_date, $termination_reason;
+  public $employee_id, $first_name, $last_name, $id_number, $tax_id_number, $married, $tax_group, $payment_period, $number_of_childrens,
+  $work_type,$number_of_work_days, $email, $termination_date, $termination_reason,$date_of_birth,$hire_date, $gender,$country_of_birth, $mobile_number, $phone_number,
+  $mobile_pre_country_id, $phone_pre_country_id;
   public $isOpen = 0;
+  public $isTerminate = 0;
   public $search = '';
   public $per_page = 10;
   public $sort_field = 'id';
   public $sort_asc = true;
-  public $active_only = false;
+  public $active_only = true;
+  public $warningMessage = '';
+
+
+
 
   public function sortBy($field){
     if($field === $this->sort_field){
@@ -36,12 +43,23 @@ class EmployeesTable extends Component
 
   public function closeModal()
   {
-      $this->isOpen = false;
+    $this->resetErrorBag();
+    $this->resetValidation();
+    $this->isOpen = false;
+    $this->isTerminate = false;
+    $this->warningMessage = '';
+  }
+
+  public function terminateEmployee(){
+      $this->warningMessage='Terminating Employee';
+      $this->isTerminate = true;
   }
 
   public function create()
   {
       $this->resetInputFields();
+      $this->isTerminate=false;
+      $this->termination_date=NULL;
       $this->openModal();
   }
 
@@ -60,6 +78,15 @@ class EmployeesTable extends Component
       $this->number_of_work_days='';
       $this->email='';
       $this->hire_date='';
+      $this->gender='';
+      $this->termination_date = '';
+      $this->termination_reason = '';
+      $this->warning_message = '';
+      $this->country_of_birth = '';
+      $this->mobile_number = '';
+      $this->phone_number = '';
+      $this->mobile_pre_country_id = '';
+      $this->phone_pre_country_id = '';
   }
 
   public function clear(){
@@ -68,7 +95,7 @@ class EmployeesTable extends Component
 
     public function render()
     {
-      $business = Business::where('id',auth()->user()->business_user->business_id)->first();
+      $business = Business::where('id',auth()->user()->current_business_id)->first();
       $employees = Employee::where('business_id',$business->id)
                     ->Where(function ($query){
                     $query->where('first_name', 'like', '%'.$this->search.'%')
@@ -77,7 +104,8 @@ class EmployeesTable extends Component
                   ->whereraw($this->active_only ? 'termination_date IS NULL' : '1')
                   ->orderBy($this->sort_field, $this->sort_asc ? 'asc' : 'desc')
                   ->paginate($this->per_page);
-      return view('sections.payroll.employees-table',['user' => auth()->user(), 'business' => $business, 'employees' => $employees]);
+      $countries = Country::all();
+      return view('sections.payroll.employees-table',['user' => auth()->user(), 'business' => $business, 'employees' => $employees, 'countries' => $countries]);
     }
 
     public function store()
@@ -89,13 +117,23 @@ class EmployeesTable extends Component
 
         ]);
 
+        $user = auth()->user();
         if($this->employee_id){
-          $employee = Employee::where('id', $this->employee_id)
-            ->update(['first_name' => $this->first_name, 'last_name' => $this->last_name, 'date_of_birth' => \Carbon\Carbon::parse($this->date_of_birth)->format('Y-m-d'),
-            'id_number' => $this->id_number, 'email' => $this->email, 'hire_date' => \Carbon\Carbon::parse($this->hire_date)->format('Y-m-d'),] );
+          $employee= Employee::findOrFail($this->employee_id);
+          $employee->update(['date_of_birth' => $this->date_of_birth, 'hire_date' => $this->hire_date, 'first_name' => $this->first_name, 'last_name' => $this->last_name, 'email' => $this->email,
+                              'id_number' => $this->id_number, 'gender' => $this->gender, 'tax_id_number' => $this->tax_id_number, 'married' => $this->married,
+                              'country_of_birth' => $this->country_of_birth, 'mobile_number' => $this->mobile_number, 'phone_number' => $this->phone_number,
+                              'mobile_pre_country_id' => $this->mobile_pre_country_id, 'phone_pre_country_id' => $this->phone_pre_country_id]);
+          if($this->isTerminate){
+            $employee->update(['termination_date' => $this->termination_date, 'termination_reason' => $this->termination_reason]);
+          }
+
         }
         else{
-
+          Employee::create(['date_of_birth' => $this->date_of_birth, 'hire_date' => $this->hire_date, 'first_name' => $this->first_name, 'last_name' => $this->last_name, 'email' => $this->email,
+                              'id_number' => $this->id_number, 'gender' => $this->gender, 'tax_id_number' => $this->tax_id_number, 'married' => $this->married,
+                              'business_id' => auth()->user()->current_business_id, 'country_of_birth' => $this->country_of_birth, 'mobile_number' => $this->mobile_number,
+                              'phone_number' => $this->phone_number, 'mobile_pre_country_id' => $this->mobile_pre_country_id, 'phone_pre_country_id' => $this->phone_pre_country_id]);
         }
 
 
@@ -103,12 +141,14 @@ class EmployeesTable extends Component
             $this->employee_id ? 'Employee Updated Successfully.' : 'Employee Created Successfully.');
 
         $this->closeModal();
+        //dd(\Carbon\Carbon::parse($this->date_of_birth)->isoFormat('Y-MM-DD'));
         $this->resetInputFields();
     }
 
     public function edit($id)
     {
        $employee = Employee::findOrFail($id);
+       $user = auth()->user();
        $this->employee_id = $id;
        $this->first_name = $employee->first_name;
        $this->last_name = $employee->last_name;
@@ -116,7 +156,20 @@ class EmployeesTable extends Component
        $this->email = $employee->email;
        $this->id_number = $employee->id_number;
        $this->hire_date = $employee->hire_date;
-
+       $this->gender = $employee->gender;
+       $this->tax_id_number = $employee->tax_id_number;
+       $this->married = $employee->married;
+       $this->termination_date = $employee->termination_date;
+       $this->termination_reason = $employee->termination_reason;
+       $this->country_of_birth = $employee->country_of_birth;
+       $this->mobile_number = $employee->mobile_number;
+       $this->phone_number = $employee->phone_number;
+       $this->mobile_pre_country_id = $employee->mobile_pre_country_id;
+       $this->phone_pre_country_id = $employee->phone_pre_country_id;
+       if($employee->termination_date !== NULL){
+         $this->warningMessage='Terminated Employee';
+       }
        $this->openModal();
    }
+
 }

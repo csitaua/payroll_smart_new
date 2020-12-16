@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\Business;
 use App\Models\Employee;
+use Illuminate\Http\Request;
 
 class Payroll extends Component
 {
@@ -47,9 +48,10 @@ class Payroll extends Component
 
     public function render()
     {
-      $business = Business::where('id',auth()->user()->business_user->business_id)->first();
+
+      $business = Business::where('id',auth()->user()->current_business_id)->first();
       $employees = Employee::where('business_id',$business->id);
-      return view('livewire.payroll', ['user' => auth()->user(), 'business' => $business, 'employees' => $employees]);
+      return view('sections.payroll.payroll', ['user' => auth()->user(), 'business' => $business, 'employees' => $employees]);
     }
 
     public function store()
@@ -91,4 +93,6 @@ class Payroll extends Component
 
        $this->openModal();
    }
+
+
 }

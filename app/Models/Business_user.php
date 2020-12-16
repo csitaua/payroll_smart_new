@@ -18,6 +18,6 @@ class Business_user extends Model
     }
 
     public function business(){
-      return $this->hasOne('App\Models\Business');
+      return $this->hasMany('App\Models\Business');
     }
 }
